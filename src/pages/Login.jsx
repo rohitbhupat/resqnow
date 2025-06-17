@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { saveUserData } from "../services/api";
+import { login } from "../services/auth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,6 +15,7 @@ const Login = () => {
   });
 
   const [otpCooldown, setOtpCooldown] = useState(0);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (otpCooldown > 0) {
@@ -37,28 +40,6 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      setErrors({});
-      console.log("Login Data:", formData, "Method:", loginType);
-      // Continue with backend login
-    }
-      if (formData.role === "ngo") {
-        navigate("/ngodashboard");
-    } else if (formData.role === "volunteer") {
-        navigate("/volunteerdashboard");
-    } else {
-        navigate("/sos");
-    }
-
-  };
-  // Only update this part inside your existing Login.jsx
-  const [errors, setErrors] = useState({});
-
   const validate = () => {
     const newErrors = {};
     if (!formData.identifier.trim()) newErrors.identifier = "Username or Phone is required.";
@@ -71,6 +52,41 @@ const Login = () => {
       else if (!/^\d{6}$/.test(formData.otp)) newErrors.otp = "OTP must be 6 digits.";
     }
     return newErrors;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+    } else {
+      setErrors({});
+      console.log("Login Data:", formData, "Method:", loginType);
+
+      // ✅ Save login event to DynamoDB via backend
+      try {
+        const { token } = await login(formData.identifier, formData.password); // Cognito auth
+        await saveUserData({
+          username: formData.identifier,
+          role: formData.role,
+          type: "login",
+          loginMethod: loginType,
+        }, token); // pass token!
+      } catch (error) {
+        console.error("Login error:", error);
+        return;
+      }
+
+
+      // ✅ Navigate after login
+      if (formData.role === "ngo") {
+        navigate("/ngodashboard");
+      } else if (formData.role === "volunteer") {
+        navigate("/volunteerdashboard");
+      } else {
+        navigate("/sos");
+      }
+    }
   };
 
   return (

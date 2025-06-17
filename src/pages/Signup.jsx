@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { saveUserData } from "../services/api";
+import { signUp } from "../services/auth";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -17,11 +19,9 @@ const Signup = () => {
     const newErrors = {};
     if (!formData.username.trim()) newErrors.username = "Username is required.";
     if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
-    else if (!/^\d{10}$/.test(formData.phone))
-      newErrors.phone = "Phone number must be 10 digits.";
+    else if (!/^\d{10}$/.test(formData.phone)) newErrors.phone = "Phone must be 10 digits.";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
-    else if (formData.password.length < 6)
-      newErrors.password = "Password must be at least 6 characters.";
+    else if (formData.password.length < 6) newErrors.password = "Min 6 characters required.";
     return newErrors;
   };
 
@@ -30,22 +30,29 @@ const Signup = () => {
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
+    if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
-    } else {
-      setErrors({});
-      console.log("Signup Data:", formData);
-      // Continue with backend signup call
+      return;
     }
-    if (formData.role === "ngo") {
-      navigate("/ngodashboard");
-    } else if (formData.role === "volunteer") {
-      navigate("/volunteerdashboard");
-    } else {
-      navigate("/sos");
+
+    setErrors({});
+    try {
+      console.log("Signup Data:", formData);
+      await signUp(formData.username, formData.password, formData.phone);
+      await saveUserData({
+        username: formData.username,
+        phone: formData.phone,
+        role: formData.role,
+        type: "signup"
+      });
+      if (formData.role === "ngo") navigate("/ngodashboard");
+      else if (formData.role === "volunteer") navigate("/volunteerdashboard");
+      else navigate("/sos");
+    } catch (err) {
+      console.error("Signup Error:", err);
     }
   };
 
@@ -54,12 +61,13 @@ const Signup = () => {
       <div className="bg-white p-6 sm:p-8 rounded-xl shadow-md w-full max-w-md">
         <h2 className="text-2xl sm:text-3xl font-bold text-center text-red-700 mb-4">ResQNow Signup</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Username */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+            <label className="block text-sm font-medium mb-1">Username</label>
             <input
               type="text"
-              placeholder="Enter your username"
               name="username"
+              placeholder="Enter your username"
               value={formData.username}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
@@ -67,8 +75,9 @@ const Signup = () => {
             {errors.username && <p className="text-sm text-red-600 mt-1">{errors.username}</p>}
           </div>
 
+          {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+            <label className="block text-sm font-medium mb-1">Phone Number</label>
             <input
               type="tel"
               name="phone"
@@ -80,12 +89,13 @@ const Signup = () => {
             {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone}</p>}
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
-              placeholder="Enter your password"
               name="password"
+              placeholder="Enter your password"
               value={formData.password}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-md"
@@ -93,6 +103,7 @@ const Signup = () => {
             {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password}</p>}
           </div>
 
+          {/* Remember Me */}
           <div className="flex items-center text-sm">
             <input
               type="checkbox"
@@ -103,27 +114,32 @@ const Signup = () => {
             />
             <label htmlFor="rememberMe">Remember Me</label>
           </div>
+
+          {/* Role */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Select Role</label>
+            <label className="block text-sm font-medium mb-1">Select Role</label>
             <select
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full px-2 py-2 border border-gray-300 rounded-md text-sm sm:text-base"
+              className="w-full px-2 py-2 border border-gray-300 rounded-md"
             >
               <option value="user">User</option>
               <option value="ngo">NGO</option>
               <option value="volunteer">Volunteer</option>
             </select>
           </div>
+
+          {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 text-sm sm:text-base"
+            className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700"
           >
             Sign Up
           </button>
         </form>
 
+        {/* Redirect to Login */}
         <div className="mt-6 text-center text-sm">
           <span>Already a user? </span>
           <button
