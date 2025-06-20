@@ -1,8 +1,8 @@
 import { CognitoUserPool, CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
 
 const poolData = {
-  UserPoolId: "ap-south-1_fVcREs1Hg",
-  ClientId: "7dmnpigaipfdfjs3hlibbc1oni",
+  UserPoolId: "ap-south-1_tPsUbgjFV",
+  ClientId: "19hfknnc4qivq36dlfh1n36qoa",
 };
 const userPool = new CognitoUserPool(poolData);
 
@@ -13,6 +13,10 @@ export const signUp = (username, password, phone) => {
       {
         Name: "phone_number",
         Value: `+91${phone}`,
+      },
+      {
+        Name: "preferred_username",
+        Value: username,
       },
     ], null, (err, result) => {
       if (err) reject(err);

@@ -46,10 +46,11 @@ const Signup = () => {
         username: formData.username,
         phone: formData.phone,
         role: formData.role,
-        type: "signup"
+        type: "signup",
+        loginMethod: "cognito"
       });
-      if (formData.role === "ngo") navigate("/ngodashboard");
-      else if (formData.role === "volunteer") navigate("/volunteerdashboard");
+      if (formData.role === "ngo") navigate("/ngo-dashboard");
+      else if (formData.role === "volunteer") navigate("/volunteer-dashboard");
       else navigate("/sos");
     } catch (err) {
       console.error("Signup Error:", err);
