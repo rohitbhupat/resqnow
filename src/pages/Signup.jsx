@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveUserData } from "../services/api";
 import { signUp } from "../services/auth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -14,6 +16,20 @@ const Signup = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("resqnowSession");
+    if (saved) {
+      const session = JSON.parse(saved);
+      const now = new Date().getTime();
+      if (now - session.timestamp < 12 * 60 * 60 * 1000) {
+        navigate(session.redirect);
+      } else {
+        localStorage.removeItem("resqnowSession");
+      }
+    }
+  }, [navigate]);
 
   const validate = () => {
     const newErrors = {};
@@ -22,6 +38,9 @@ const Signup = () => {
     else if (!/^\d{10}$/.test(formData.phone)) newErrors.phone = "Phone must be 10 digits.";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
     else if (formData.password.length < 6) newErrors.password = "Min 6 characters required.";
+    if (formData.role === "admin" && formData.username !== "admin@resqnow.com") {
+      newErrors.role = "Unauthorized to register as admin.";
+    }
     return newErrors;
   };
 
@@ -42,16 +61,36 @@ const Signup = () => {
     try {
       console.log("Signup Data:", formData);
       await signUp(formData.username, formData.password, formData.phone);
+
+      const redirect =
+        formData.role === "ngo"
+          ? "/ngo-dashboard"
+          : formData.role === "volunteer"
+          ? "/volunteer-dashboard"
+          : formData.role === "admin"
+          ? "/admin-dashboard"
+          : "/sos";
+
       await saveUserData({
         username: formData.username,
         phone: formData.phone,
         role: formData.role,
         type: "signup",
-        loginMethod: "cognito"
+        loginMethod: "cognito",
       });
-      if (formData.role === "ngo") navigate("/ngo-dashboard");
-      else if (formData.role === "volunteer") navigate("/volunteer-dashboard");
-      else navigate("/sos");
+
+      if (formData.rememberMe) {
+        localStorage.setItem(
+          "resqnowSession",
+          JSON.stringify({
+            token: "dummy_token_for_now",
+            timestamp: new Date().getTime(),
+            redirect,
+          })
+        );
+      }
+
+      navigate(redirect);
     } catch (err) {
       console.error("Signup Error:", err);
     }
@@ -62,7 +101,6 @@ const Signup = () => {
       <div className="bg-white p-6 sm:p-8 rounded-xl shadow-md w-full max-w-md">
         <h2 className="text-2xl sm:text-3xl font-bold text-center text-red-700 mb-4">ResQNow Signup</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username */}
           <div>
             <label className="block text-sm font-medium mb-1">Username</label>
             <input
@@ -76,7 +114,6 @@ const Signup = () => {
             {errors.username && <p className="text-sm text-red-600 mt-1">{errors.username}</p>}
           </div>
 
-          {/* Phone */}
           <div>
             <label className="block text-sm font-medium mb-1">Phone Number</label>
             <input
@@ -90,21 +127,27 @@ const Signup = () => {
             {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone}</p>}
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm font-medium mb-1">Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md"
+              />
+              <span
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500"
+              >
+                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+              </span>
+            </div>
             {errors.password && <p className="text-sm text-red-600 mt-1">{errors.password}</p>}
           </div>
 
-          {/* Remember Me */}
           <div className="flex items-center text-sm">
             <input
               type="checkbox"
@@ -116,7 +159,6 @@ const Signup = () => {
             <label htmlFor="rememberMe">Remember Me</label>
           </div>
 
-          {/* Role */}
           <div>
             <label className="block text-sm font-medium mb-1">Select Role</label>
             <select
@@ -128,10 +170,11 @@ const Signup = () => {
               <option value="user">User</option>
               <option value="ngo">NGO</option>
               <option value="volunteer">Volunteer</option>
+              <option value="admin">Admin</option>
             </select>
+            {errors.role && <p className="text-sm text-red-600 mt-1">{errors.role}</p>}
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700"
@@ -140,7 +183,6 @@ const Signup = () => {
           </button>
         </form>
 
-        {/* Redirect to Login */}
         <div className="mt-6 text-center text-sm">
           <span>Already a user? </span>
           <button
