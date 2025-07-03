@@ -66,10 +66,10 @@ const Signup = () => {
         formData.role === "ngo"
           ? "/ngo-dashboard"
           : formData.role === "volunteer"
-          ? "/volunteer-dashboard"
-          : formData.role === "admin"
-          ? "/admin-dashboard"
-          : "/sos";
+            ? "/volunteer-dashboard"
+            : formData.role === "admin"
+              ? "/admin-dashboard"
+              : "/sos";
 
       await saveUserData({
         username: formData.username,
@@ -89,7 +89,14 @@ const Signup = () => {
           })
         );
       }
-
+      localStorage.setItem(
+        "resq_user",
+        JSON.stringify({
+          username: formData.username,
+          role: formData.role,
+        })
+      );
+      window.dispatchEvent(new Event("resq_user_update")); // ✅ Trigger Navbar update
       navigate(redirect);
     } catch (err) {
       console.error("Signup Error:", err);

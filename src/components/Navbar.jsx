@@ -1,72 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null); // { username: 'abc', role: 'user' | 'ngo' | 'volunteer' }
+  const location = useLocation();
+  const [user, setUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    // Simulated login user from localStorage (replace with Cognito Auth check)
-    const loggedInUser = JSON.parse(localStorage.getItem('resq_user'));
-    if (loggedInUser) {
-      setUser(loggedInUser);
+    const storedUser = localStorage.getItem('resq_user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      setUser(null);
     }
-  }, []);
+  }, [location]);
 
   const handleLogout = () => {
-    // Replace with Cognito logout if using AWS Amplify/Auth
     localStorage.removeItem('resq_user');
+    localStorage.removeItem('resqnowSession');
+    localStorage.clear(); // Optional: clear all
     setUser(null);
     navigate('/');
   };
 
-  const renderProfileDropdown = () => (
-    <div className="relative group cursor-pointer">
-      <FaUserCircle size={24} className="text-gray-700 hover:text-red-600" />
-      <div className="absolute right-0 mt-2 w-48 bg-white rounded shadow-md p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20">
-        <p className="px-4 py-2 text-sm text-gray-800 font-semibold">
-          {user.username} <br />
-          <span className="text-xs text-gray-500 capitalize">{user.role}</span>
-        </p>
-        <hr className="my-1" />
-
-        <NavLink
-          to={`/${user.role}/profile`}
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          Edit Profile
-        </NavLink>
-
-        <NavLink
-          to={`/${user.role}/dashboard`}
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          {user.role === 'ngo' ? 'NGO Dashboard' :
-            user.role === 'volunteer' ? 'Volunteer Dashboard' : 'My Dashboard'}
-        </NavLink>
-
-        <button
-          onClick={handleLogout}
-          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-        >
-          Logout
-        </button>
-      </div>
-    </div>
-  );
+  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  const closeDropdown = () => setDropdownOpen(false);
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <NavLink
-          to="/"
-          className="text-red-600 text-2xl font-bold tracking-wide"
-        >
+        <NavLink to="/" className="text-red-600 text-2xl font-bold tracking-wide">
           ResQNow
         </NavLink>
 
-        <div className="space-x-4 text-sm sm:text-base flex items-center">
+        <div className="space-x-4 text-sm sm:text-base flex items-center relative">
           <NavLink
             to="/"
             className={({ isActive }) =>
@@ -85,14 +54,16 @@ const Navbar = () => {
             SOS
           </NavLink>
 
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              isActive ? 'text-red-600 font-semibold' : 'text-gray-700 hover:text-red-600'
-            }
-          >
-            Dashboard
-          </NavLink>
+          {user && (
+            <NavLink
+              to={`/${user.role}-dashboard`}
+              className={({ isActive }) =>
+                isActive ? 'text-red-600 font-semibold' : 'text-gray-700 hover:text-red-600'
+              }
+            >
+              Dashboard
+            </NavLink>
+          )}
 
           {!user ? (
             <NavLink
@@ -104,7 +75,39 @@ const Navbar = () => {
               Login
             </NavLink>
           ) : (
-            renderProfileDropdown()
+            <div className="relative">
+              <button onClick={toggleDropdown} className="text-gray-800 hover:text-red-600">
+                <FaUserCircle className="text-2xl" />
+              </button>
+
+              {dropdownOpen && (
+                <div
+                  className="absolute right-0 mt-2 w-52 bg-white border rounded-lg shadow-lg z-20"
+                  onMouseLeave={closeDropdown}
+                >
+                  <div className="px-4 py-3 border-b text-sm text-gray-700">
+                    Welcome, <span className="font-semibold">{user.username}</span>
+                    <br />
+                    <span className="text-xs text-gray-500 capitalize">{user.role}</span>
+                  </div>
+
+                  <NavLink
+                    to={`/profile`}
+                    onClick={closeDropdown}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Profile Settings
+                  </NavLink>
+
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>

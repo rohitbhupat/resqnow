@@ -38,12 +38,15 @@ const Home = () => {
                         >
                             Send SOS
                         </button>
-                        <button
-                            onClick={() => navigate("/login")}
-                            className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition"
-                        >
-                            Login / Signup
-                        </button>
+
+                        {!localStorage.getItem("resq_user") && (
+                            <button
+                                onClick={() => navigate("/login")}
+                                className="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition"
+                            >
+                                Login / Signup
+                            </button>
+                        )}
                     </div>
                 </div>
 

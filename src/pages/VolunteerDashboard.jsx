@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import DashboardCard from "../components/DashboardCard";
 
 const VolunteerDashboard = () => {
   const [sosRequests, setSosRequests] = useState([]);

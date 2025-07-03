@@ -1,9 +1,11 @@
 import React from 'react';
+import Navbar from "../components/Navbar";
 import SOSForm from '../components/SOSForm';
 
 const SOS = () => {
     return (
         <>
+            <Navbar />
             <div className="min-h-screen bg-red-50 py-12 px-4 sm:px-10">
                 <h1 className="text-3xl font-bold text-red-700 text-center mb-6">Send an SOS Alert</h1>
                 <p className="text-center text-gray-700 mb-10 max-w-xl mx-auto">

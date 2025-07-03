@@ -53,12 +53,25 @@ const Login = () => {
       setErrors({});
       try {
         const { token } = await login(formData.identifier, formData.password);
+
         const redirect =
           formData.role === "ngo"
             ? "/ngo-dashboard"
             : formData.role === "volunteer"
               ? "/volunteer-dashboard"
-              : "/sos";
+              : formData.role === "admin"
+                ? "/admin-dashboard"
+                : "/sos";
+
+        // ✅ Save user info to localStorage so Navbar can read it
+        localStorage.setItem(
+          "resq_user",
+          JSON.stringify({
+            username: formData.identifier,
+            role: formData.role,
+          })
+        );
+        window.dispatchEvent(new Event("resq_user_update")); // ✅ This tells Navbar to refresh
 
         await saveUserData(
           {
@@ -140,7 +153,21 @@ const Login = () => {
             />
             <label htmlFor="rememberMe">Remember Me</label>
           </div>
-
+          <div>
+            <label className="block text-sm font-medium mb-1">Select Role</label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="w-full px-2 py-2 border border-gray-300 rounded-md"
+            >
+              <option value="user">User</option>
+              <option value="ngo">NGO</option>
+              <option value="volunteer">Volunteer</option>
+              <option value="admin">Admin</option>
+            </select>
+            {errors.role && <p className="text-sm text-red-600 mt-1">{errors.role}</p>}
+          </div>
           <button
             type="submit"
             className="w-full bg-yellow-600 text-white py-2 rounded-md hover:bg-yellow-700 text-sm sm:text-base"
