@@ -4,12 +4,15 @@ import { saveUserData } from "../services/api";
 import { signUp } from "../services/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import 'react-phone-input-2/lib/style.css';
+import PhoneInput from 'react-phone-input-2';
+
 
 const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
-    phone: "",
+    contact: "",
     role: "user",
     password: "",
     rememberMe: false,
@@ -34,8 +37,8 @@ const Signup = () => {
   const validate = () => {
     const newErrors = {};
     if (!formData.username.trim()) newErrors.username = "Username is required.";
-    if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
-    else if (!/^\d{10}$/.test(formData.phone)) newErrors.phone = "Phone must be 10 digits.";
+    if (!formData.contact.trim()) newErrors.contact = "Phone number is required.";
+    else if (!/^\+\d{10,15}$/.test(formData.contact)) newErrors.contact = "Enter valid international number (e.g., +919876543210).";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
     else if (formData.password.length < 6) newErrors.password = "Min 6 characters required.";
     if (formData.role === "admin" && formData.username !== "admin@resqnow.com") {
@@ -60,7 +63,7 @@ const Signup = () => {
     setErrors({});
     try {
       console.log("Signup Data:", formData);
-      await signUp(formData.username, formData.password, formData.phone);
+      await signUp(formData.username, formData.password, formData.contact);
 
       const redirect =
         formData.role === "ngo"
@@ -73,7 +76,7 @@ const Signup = () => {
 
       await saveUserData({
         username: formData.username,
-        phone: formData.phone,
+        contact: formData.contact,
         role: formData.role,
         type: "signup",
         loginMethod: "cognito",
@@ -94,6 +97,7 @@ const Signup = () => {
         JSON.stringify({
           username: formData.username,
           role: formData.role,
+          contact: formData.contact,
         })
       );
       window.dispatchEvent(new Event("resq_user_update")); // ✅ Trigger Navbar update
@@ -123,15 +127,19 @@ const Signup = () => {
 
           <div>
             <label className="block text-sm font-medium mb-1">Phone Number</label>
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Enter your phone number"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md"
+            <PhoneInput
+              country={'in'}
+              value={formData.contact}
+              onChange={(phone) =>
+                setFormData((prev) => ({ ...prev, contact: `+${phone}` }))
+              }
+              inputStyle={{ width: '100%' }}
+              inputProps={{
+                name: 'contact',
+                required: true,
+              }}
             />
-            {errors.phone && <p className="text-sm text-red-600 mt-1">{errors.phone}</p>}
+            {errors.contact && <p className="text-sm text-red-600 mt-1">{errors.contact}</p>}
           </div>
 
           <div>

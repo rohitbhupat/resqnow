@@ -12,7 +12,7 @@ export const signUp = (username, password, phone) => {
     userPool.signUp(username, password, [
       {
         Name: "phone_number",
-        Value: `+91${phone}`,
+        Value: phone,
       },
       {
         Name: "preferred_username",
