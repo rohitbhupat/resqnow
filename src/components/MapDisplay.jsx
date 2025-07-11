@@ -4,14 +4,9 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiYmh1cGF0cnVoYWFuIiwiYSI6ImNtY3NvN3BoMzEyY3YybXNicHRnOTlpbG0ifQ.n4ENglW-EbD6MMOzN-MreA';
 
-const getUrgencyColor = (urgency) => {
-    switch (urgency?.toLowerCase()) {
-        case 'low': return 'green';
-        case 'medium': return 'orange';
-        case 'high': return 'red';
-        case 'critical': return 'black';
-        default: return 'blue';
-    }
+const getStatusColor = (status) => {
+    if (status?.toLowerCase() === 'resolved') return 'green';
+    return 'red'; // Default = Pending
 };
 
 const MapDisplay = ({ alerts = [], focusLat = 28.6139, focusLng = 77.2090 }) => {
@@ -19,7 +14,6 @@ const MapDisplay = ({ alerts = [], focusLat = 28.6139, focusLng = 77.2090 }) => 
     const map = useRef(null);
     const markers = useRef([]);
 
-    // Clean up old markers
     const clearMarkers = () => {
         markers.current.forEach(marker => marker.remove());
         markers.current = [];
@@ -44,7 +38,7 @@ const MapDisplay = ({ alerts = [], focusLat = 28.6139, focusLng = 77.2090 }) => 
         const bounds = new mapboxgl.LngLatBounds();
 
         alerts.forEach(alert => {
-            let [lat, lng] = [28.6139, 77.2090]; // default coords
+            let [lat, lng] = [28.6139, 77.2090]; // Default coords
             if (typeof alert.location === 'string' && alert.location.includes(',')) {
                 const [latStr, lngStr] = alert.location.split(',');
                 lat = parseFloat(latStr);
@@ -54,7 +48,7 @@ const MapDisplay = ({ alerts = [], focusLat = 28.6139, focusLng = 77.2090 }) => 
                 lng = alert.lng;
             }
 
-            const marker = new mapboxgl.Marker({ color: getUrgencyColor(alert.urgency) })
+            const marker = new mapboxgl.Marker({ color: getStatusColor(alert.status) })
                 .setLngLat([lng, lat])
                 .setPopup(new mapboxgl.Popup().setText(alert.message || "SOS Alert"))
                 .addTo(map.current);
@@ -62,7 +56,6 @@ const MapDisplay = ({ alerts = [], focusLat = 28.6139, focusLng = 77.2090 }) => 
             markers.current.push(marker);
             bounds.extend([lng, lat]);
 
-            // Optional responder marker
             if (alert.responder_lat && alert.responder_lng) {
                 const responderMarker = new mapboxgl.Marker({ color: 'blue' })
                     .setLngLat([alert.responder_lng, alert.responder_lat])

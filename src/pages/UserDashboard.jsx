@@ -134,9 +134,9 @@ const UserDashboard = () => {
                 ) : alerts.length === 0 ? (
                     <p className="text-center">No alerts submitted yet.</p>
                 ) : (
-                    <div className="overflow-auto">
-                        <table className="min-w-full bg-white rounded shadow text-sm border border-gray-300">
-                            <thead className="bg-gray-100 border-b border-gray-300">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full bg-white rounded-xl shadow text-sm border border-gray-300">
+                            <thead className="bg-red-100 border-b border-gray-300 text-red-800">
                                 <tr>
                                     <th className="p-3 text-left border-r border-gray-300">Name</th>
                                     <th className="p-3 text-left border-r border-gray-300">Phone</th>
@@ -151,7 +151,7 @@ const UserDashboard = () => {
                             </thead>
                             <tbody>
                                 {alerts.map(alert => (
-                                    <tr key={alert.sos_id} className="border-b border-gray-300">
+                                    <tr key={alert.sos_id} className="border-b border-gray-200 hover:bg-red-50 transition">
                                         <td className="p-2 border-r border-gray-200">{alert.username}</td>
                                         <td className="p-2 border-r border-gray-200">{alert.contact || "N/A"}</td>
                                         <td className="p-2 border-r border-gray-200">
@@ -177,23 +177,21 @@ const UserDashboard = () => {
                                         <td className="p-2 border-r border-gray-200">{alert.status || "Pending"}</td>
                                         <td className="p-2 border-r border-gray-200">{new Date(alert.timestamp).toLocaleString()}</td>
                                         <td className="p-2 border-r border-gray-200">
-                                            <button
-                                                onClick={() => setActiveMapAlert(alert)}
-                                                className="px-2 py-1 bg-indigo-600 text-white rounded"
-                                            >
+                                            <button onClick={() => setActiveMapAlert(alert)} className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full text-xs font-semibold">
+
                                                 View Map
                                             </button>
                                         </td>
                                         <td className="p-2 space-x-1">
                                             {editingAlertId === alert.sos_id ? (
                                                 <>
-                                                    <button onClick={() => handleSave(alert.sos_id)} className="px-2 py-1 bg-green-600 text-white rounded">Save</button>
-                                                    <button onClick={() => setEditingAlertId(null)} className="px-2 py-1 bg-gray-500 text-white rounded">Cancel</button>
+                                                    <button onClick={() => handleSave(alert.sos_id)} className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-semibold">Save</button>
+                                                    <button onClick={() => setEditingAlertId(null)} className="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded text-xs font-semibold">Cancel</button>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <button onClick={() => handleEdit(alert)} className="px-2 py-1 bg-blue-600 text-white rounded">Edit</button>
-                                                    <button onClick={() => handleCancelSOS(alert.sos_id)} className="px-2 py-1 bg-red-600 text-white rounded">Cancel</button>
+                                                    <button onClick={() => handleEdit(alert)} className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-semibold">Edit</button>
+                                                    <button onClick={() => handleCancelSOS(alert.sos_id)} className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-semibold">Cancel</button>
                                                 </>
                                             )}
                                         </td>

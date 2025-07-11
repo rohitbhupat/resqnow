@@ -25,7 +25,6 @@ const AdminDashboard = () => {
     if (data?.listResQNowGraphQLAPIS?.items) {
       const alerts = data.listResQNowGraphQLAPIS.items;
 
-
       console.log("All Alerts:", alerts);
 
       const res = alerts.filter(a => a.status === 'Resolved').length;
