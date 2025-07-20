@@ -9,6 +9,7 @@ export const LIST_SOS_ALERTS = gql`
         urgency
         status
         timestamp
+        location
       }
     }
   }

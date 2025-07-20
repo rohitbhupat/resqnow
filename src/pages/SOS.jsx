@@ -1,8 +1,10 @@
 import React from 'react';
 import Navbar from "../components/Navbar";
 import SOSForm from '../components/SOSForm';
+import usePageTitle from "../pages/usePageTitle";
 
 const SOS = () => {
+    usePageTitle("SOS Form | ResQNow");
     return (
         <>
             <Navbar />

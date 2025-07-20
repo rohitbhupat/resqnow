@@ -8,6 +8,7 @@ export const ON_CREATE_SOS_ALERT = gql`
       urgency
       status
       timestamp
+      location
     }
   }
 `;
@@ -17,6 +18,7 @@ export const ON_UPDATE_SOS_STATUS = gql`
     onUpdateResQNowGraphQLAPI {
       sos_id
       status
+      location
     }
   }
 `;

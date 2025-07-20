@@ -11,16 +11,25 @@ const Navbar = () => {
   useEffect(() => {
     const storedUser = localStorage.getItem('resq_user');
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setUser(parsedUser);
+
+      // 🚀 Redirect admin to admin dashboard if current path is root or login
+      if (
+        parsedUser.role === 'admin' &&
+        (location.pathname === '/' || location.pathname === '/login')
+      ) {
+        navigate('/admin/dashboard');
+      }
     } else {
       setUser(null);
     }
-  }, [location]);
+  }, [location, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('resq_user');
     localStorage.removeItem('resqnowSession');
-    localStorage.clear(); // Optional: clear all
+    localStorage.clear();
     setUser(null);
     navigate('/');
   };
@@ -56,7 +65,7 @@ const Navbar = () => {
 
           {user && (
             <NavLink
-              to={`/${user.role}-dashboard`}
+              to={`/${user.role === 'admin' ? 'admin' : user.role}-dashboard`}
               className={({ isActive }) =>
                 isActive ? 'text-red-600 font-semibold' : 'text-gray-700 hover:text-red-600'
               }
@@ -88,11 +97,13 @@ const Navbar = () => {
                   <div className="px-4 py-3 border-b text-sm text-gray-700">
                     Welcome, <span className="font-semibold">{user.username}</span>
                     <br />
-                    <span className="text-xs text-gray-500 capitalize">{user.role}</span>
+                    <span className="text-xs text-gray-500 capitalize">
+                      {user.role === 'admin' ? 'Admin' : user.role}
+                    </span>
                   </div>
 
                   <NavLink
-                    to={`/profile`}
+                    to="/profile"
                     onClick={closeDropdown}
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                   >

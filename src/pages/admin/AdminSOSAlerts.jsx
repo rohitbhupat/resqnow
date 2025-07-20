@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import MapDisplay from '../../components/MapDisplay';
 import { Toaster, toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import usePageTitle from "../../pages/usePageTitle";
 
 const AdminSOSAlerts = () => {
+    usePageTitle("SOS Alerts | ResQNow Admin");
     const [alerts, setAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editingAlertId, setEditingAlertId] = useState(null);
     const [editedData, setEditedData] = useState({});
     const [activeMapAlert, setActiveMapAlert] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (activeMapAlert) {
@@ -113,6 +117,14 @@ const AdminSOSAlerts = () => {
                 <Toaster position="top-right" />
                 <AdminSidebar />
                 <div className="flex-1 p-6 bg-gray-100 min-h-screen">
+                    <div className="flex items-center justify-between mb-6">
+                        <button
+                            onClick={() => navigate('/')}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold"
+                        >
+                            Home
+                        </button>
+                    </div>
                     <h1 className="text-2xl font-bold mb-4 text-gray-800">All SOS Alerts</h1>
 
                     {loading ? (
@@ -155,23 +167,50 @@ const AdminSOSAlerts = () => {
                                             </td>
                                             <td className="p-2 border-r border-gray-100">{alert.status || "Pending"}</td>
                                             <td className="p-2 border-r border-gray-100">{new Date(alert.timestamp).toLocaleString()}</td>
-                                            <td className="p-2 border-r border-gray-100">
-                                                <button onClick={() => setActiveMapAlert(alert)} className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full text-xs font-semibold">
-                                                    View Map
-                                                </button>
+                                            <td className="p-2">
+                                                <div className="flex justify-center">
+                                                    <button
+                                                        onClick={() => setActiveMapAlert(alert)}
+                                                        className="min-w-[80px] px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full text-xs font-semibold text-center"
+                                                    >
+                                                        View Map
+                                                    </button>
+                                                </div>
                                             </td>
-                                            <td className="p-2 space-x-1">
-                                                {editingAlertId === alert.sos_id ? (
-                                                    <>
-                                                        <button onClick={() => handleSave(alert.sos_id)} className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-semibold">Save</button>
-                                                        <button onClick={() => setEditingAlertId(null)} className="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded text-xs font-semibold">Cancel</button>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <button onClick={() => handleEdit(alert)} className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-semibold">Edit</button>
-                                                        <button onClick={() => handleCancelSOS(alert.sos_id)} className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-semibold">Cancel</button>
-                                                    </>
-                                                )}
+                                            <td className="p-2">
+                                                <div className="flex flex-wrap gap-2">
+                                                    {editingAlertId === alert.sos_id ? (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleSave(alert.sos_id)}
+                                                                className="min-w-[70px] px-3 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-xs font-semibold"
+                                                            >
+                                                                Save
+                                                            </button>
+                                                            <button
+                                                                onClick={() => setEditingAlertId(null)}
+                                                                className="min-w-[70px] px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded text-xs font-semibold"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <button
+                                                                onClick={() => handleEdit(alert)}
+                                                                className="min-w-[70px] px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs font-semibold"
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleCancelSOS(alert.sos_id)}
+                                                                className="min-w-[70px] px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-semibold"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}

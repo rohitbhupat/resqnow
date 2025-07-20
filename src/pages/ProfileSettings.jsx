@@ -5,8 +5,11 @@ import toast, { Toaster } from 'react-hot-toast';
 import 'react-phone-input-2/lib/style.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import usePageTitle from "../pages/usePageTitle";
 
 const ProfileSettings = () => {
+    usePageTitle("Profile | ResQNow");
+
     const [profileData, setProfileData] = useState({
         username: '',
         contact: '',

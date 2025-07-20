@@ -5,29 +5,35 @@ import MapDisplay from '../../components/MapDisplay';
 import { LIST_SOS_ALERTS } from '../../graphql/queries';
 import { ON_CREATE_SOS_ALERT, ON_UPDATE_SOS_STATUS } from '../../graphql/subscriptions';
 import { toast, Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import usePageTitle from "../../pages/usePageTitle";
 
 const AdminLiveMap = () => {
+    usePageTitle("SOS LiveMap | ResQNow Admin");
     const [alerts, setAlerts] = useState([]);
-    const [filter, setFilter] = useState('total'); // 'total' | 'active' | 'resolved'
+    const [filter, setFilter] = useState('total');
+    const navigate = useNavigate();
 
     const { loading, error, data } = useQuery(LIST_SOS_ALERTS);
 
     useSubscription(ON_CREATE_SOS_ALERT, {
-        onData: ({ data: { data } }) => {
-            if (data?.onCreateResQNowGraphQLAPI) {
-                setAlerts(prev => [...prev, data.onCreateResQNowGraphQLAPI]);
+        onData: ({ data }) => {
+            const newAlert = data?.data?.onCreateResQNowGraphQLAPI;
+            if (newAlert) {
+                setAlerts(prev => [...prev, newAlert]);
                 toast.success("New SOS alert received");
             }
         }
     });
 
     useSubscription(ON_UPDATE_SOS_STATUS, {
-        onData: ({ data: { data } }) => {
-            if (data?.onUpdateResQNowGraphQLAPI) {
+        onData: ({ data }) => {
+            const updatedAlert = data?.data?.onUpdateResQNowGraphQLAPI;
+            if (updatedAlert) {
                 setAlerts(prev =>
                     prev.map(alert =>
-                        alert.sos_id === data.onUpdateResQNowGraphQLAPI.sos_id
-                            ? { ...alert, status: data.onUpdateResQNowGraphQLAPI.status }
+                        alert.sos_id === updatedAlert.sos_id
+                            ? { ...alert, status: updatedAlert.status }
                             : alert
                     )
                 );
@@ -38,6 +44,7 @@ const AdminLiveMap = () => {
 
     useEffect(() => {
         if (data?.listResQNowGraphQLAPIS?.items) {
+            console.log("Fetched SOS alerts:", data.listResQNowGraphQLAPIS.items);
             setAlerts(data.listResQNowGraphQLAPIS.items);
         }
     }, [data]);
@@ -49,11 +56,8 @@ const AdminLiveMap = () => {
     const filteredAlerts = alerts.filter(alert => {
         if (filter === 'active') return alert.status?.toLowerCase() !== 'resolved';
         if (filter === 'resolved') return alert.status?.toLowerCase() === 'resolved';
-        return true; // total
+        return true;
     });
-
-    const firstLocation = filteredAlerts.find(a => a.location && a.location.includes(','));
-    const [lat, lng] = firstLocation ? firstLocation.location.split(',').map(parseFloat) : [28.6139, 77.2090];
 
     if (loading) return <p>Loading map...</p>;
     if (error) return <p>Error loading data: {error.message}</p>;
@@ -63,35 +67,35 @@ const AdminLiveMap = () => {
             <Toaster />
             <AdminSidebar />
             <div className="flex-1 p-6 bg-gray-100 min-h-screen">
+                <div className="flex items-center justify-between mb-6">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold"
+                    >
+                        Home
+                    </button>
+                </div>
                 <h1 className="text-2xl font-bold mb-4 text-gray-800">Live SOS Map</h1>
 
-                {/* Summary Cards with click filters */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div
-                        className={`cursor-pointer bg-white p-4 rounded shadow border-l-4 ${filter === 'total' ? 'border-blue-700' : 'border-blue-400'}`}
-                        onClick={() => setFilter('total')}
-                    >
-                        <h2 className="text-lg font-semibold text-gray-700">Total Alerts</h2>
-                        <p className="text-2xl font-bold text-blue-600">{total}</p>
-                    </div>
-                    <div
-                        className={`cursor-pointer bg-white p-4 rounded shadow border-l-4 ${filter === 'active' ? 'border-red-700' : 'border-red-400'}`}
-                        onClick={() => setFilter('active')}
-                    >
-                        <h2 className="text-lg font-semibold text-gray-700">Active Alerts</h2>
-                        <p className="text-2xl font-bold text-red-600">{active}</p>
-                    </div>
-                    <div
-                        className={`cursor-pointer bg-white p-4 rounded shadow border-l-4 ${filter === 'resolved' ? 'border-green-700' : 'border-green-400'}`}
-                        onClick={() => setFilter('resolved')}
-                    >
-                        <h2 className="text-lg font-semibold text-gray-700">Resolved Alerts</h2>
-                        <p className="text-2xl font-bold text-green-600">{resolved}</p>
-                    </div>
+                    {[
+                        { label: "Total Alerts", count: total, color: "blue", filterKey: "total" },
+                        { label: "Active Alerts", count: active, color: "red", filterKey: "active" },
+                        { label: "Resolved Alerts", count: resolved, color: "green", filterKey: "resolved" }
+                    ].map(({ label, count, color, filterKey }) => (
+                        <div
+                            key={filterKey}
+                            className={`cursor-pointer bg-white p-4 rounded shadow border-l-4 ${filter === filterKey ? `border-${color}-700` : `border-${color}-400`
+                                }`}
+                            onClick={() => setFilter(filterKey)}
+                        >
+                            <h2 className="text-lg font-semibold text-gray-700">{label}</h2>
+                            <p className={`text-2xl font-bold text-${color}-600`}>{count}</p>
+                        </div>
+                    ))}
                 </div>
 
-                {/* Map */}
-                <MapDisplay alerts={filteredAlerts} focusLat={lat} focusLng={lng} />
+                <MapDisplay alerts={filteredAlerts} />
             </div>
         </div>
     );

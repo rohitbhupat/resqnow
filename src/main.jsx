@@ -18,7 +18,7 @@ import { getMainDefinition } from '@apollo/client/utilities';
 const httpLink = createHttpLink({
   uri: 'https://w3fvxcwzm5hnbd7op4ir6crfzq.appsync-api.ap-south-1.amazonaws.com/graphql',
   headers: {
-    'x-api-key': 'da2-ue6xakomife3lm2huemtjchy44',
+    'x-api-key': 'da2-sabexweilffjblamzmxjgf4dsa',
   },
 });
 
@@ -26,7 +26,7 @@ const wsLink = new GraphQLWsLink(
   createClient({
     url: 'wss://w3fvxcwzm5hnbd7op4ir6crfzq.appsync-realtime-api.ap-south-1.amazonaws.com/graphql',
     connectionParams: {
-      authToken: 'da2-ue6xakomife3lm2huemtjchy44',
+      authToken: 'da2-sabexweilffjblamzmxjgf4dsa',
     },
   })
 );

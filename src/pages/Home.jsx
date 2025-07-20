@@ -1,5 +1,6 @@
 // your imports
 import React from "react";
+import usePageTitle from "../pages/usePageTitle";
 import {
     Siren,
     Compass,
@@ -17,6 +18,7 @@ import Footer from "../components/Footer";
 
 const Home = () => {
     const navigate = useNavigate();
+    usePageTitle("Home | ResQNow");
 
     return (
         <>

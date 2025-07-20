@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveUserData } from "../services/api";
+import usePageTitle from "../pages/usePageTitle";
 import { login } from "../services/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
+  usePageTitle("Login | ResQNow");
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     identifier: "",
@@ -60,7 +62,7 @@ const Login = () => {
             : formData.role === "volunteer"
               ? "/volunteer-dashboard"
               : formData.role === "admin"
-                ? "/admin-dashboard"
+                ? "/admin/dashboard"
                 : "/sos";
 
         // ✅ Save user info to localStorage so Navbar can read it

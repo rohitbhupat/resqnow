@@ -6,9 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import 'react-phone-input-2/lib/style.css';
 import PhoneInput from 'react-phone-input-2';
-
+import usePageTitle from "../pages/usePageTitle";
 
 const Signup = () => {
+  usePageTitle("Signup | ResQNow");
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
@@ -41,7 +42,7 @@ const Signup = () => {
     else if (!/^\+\d{10,15}$/.test(formData.contact)) newErrors.contact = "Enter valid international number (e.g., +919876543210).";
     if (!formData.password.trim()) newErrors.password = "Password is required.";
     else if (formData.password.length < 6) newErrors.password = "Min 6 characters required.";
-    if (formData.role === "admin" && formData.username !== "admin@resqnow.com") {
+    if (formData.role === "admin" && formData.username !== "admin_resqnow") {
       newErrors.role = "Unauthorized to register as admin.";
     }
     return newErrors;
@@ -71,7 +72,7 @@ const Signup = () => {
           : formData.role === "volunteer"
             ? "/volunteer-dashboard"
             : formData.role === "admin"
-              ? "/admin-dashboard"
+              ? "/admin/dashboard"
               : "/sos";
 
       await saveUserData({

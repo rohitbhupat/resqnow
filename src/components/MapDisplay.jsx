@@ -1,90 +1,84 @@
 import mapboxgl from 'mapbox-gl';
 import React, { useEffect, useRef } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import '../assets/mapbeacon.css'; // Your beacon CSS
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiYmh1cGF0cnVoYWFuIiwiYSI6ImNtY3NvN3BoMzEyY3YybXNicHRnOTlpbG0ifQ.n4ENglW-EbD6MMOzN-MreA';
+mapboxgl.accessToken = 'pk.eyJ1IjoiYmh1cGF0cnVoYWFuIiwiYSI6ImNtZDZ4NGV1NDBmMjkya3NjM3l3ZXp6d2oifQ.zIcvqlwpZDa02_Ms4EhNOw';
 
 const getStatusColor = (status) => {
-    if (status?.toLowerCase() === 'resolved') return 'green';
-    return 'red'; // Default = Pending
+  if (status?.toLowerCase() === 'resolved') return 'green';
+  return 'red';
 };
 
-const MapDisplay = ({ alerts = [], focusLat = 28.6139, focusLng = 77.2090 }) => {
-    const mapContainer = useRef(null);
-    const map = useRef(null);
-    const markers = useRef([]);
+const MapDisplay = ({ alerts = [] }) => {
+  const mapContainer = useRef(null);
+  const map = useRef(null);
+  const markers = useRef([]);
 
-    const clearMarkers = () => {
-        markers.current.forEach(marker => marker.remove());
-        markers.current = [];
-    };
+  const clearMarkers = () => {
+    markers.current.forEach(marker => marker.remove());
+    markers.current = [];
+  };
 
-    useEffect(() => {
-        if (!map.current && mapContainer.current) {
-            map.current = new mapboxgl.Map({
-                container: mapContainer.current,
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: [focusLng, focusLat],
-                zoom: 10,
-            });
-        }
-    }, [focusLat, focusLng]);
+  useEffect(() => {
+    if (!map.current && mapContainer.current) {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [77.2090, 28.6139],
+        zoom: 5,
+      });
+    }
+  }, []);
 
-    useEffect(() => {
-        if (!map.current || alerts.length === 0) return;
+  useEffect(() => {
+    if (!map.current || alerts.length === 0) return;
 
-        clearMarkers();
+    clearMarkers();
+    const bounds = new mapboxgl.LngLatBounds();
 
-        const bounds = new mapboxgl.LngLatBounds();
+    alerts.forEach(alert => {
+      let lat, lng;
 
-        alerts.forEach(alert => {
-            let [lat, lng] = [28.6139, 77.2090]; // Default coords
-            if (typeof alert.location === 'string' && alert.location.includes(',')) {
-                const [latStr, lngStr] = alert.location.split(',');
-                lat = parseFloat(latStr);
-                lng = parseFloat(lngStr);
-            } else if (alert.lat && alert.lng) {
-                lat = alert.lat;
-                lng = alert.lng;
-            }
+      if (typeof alert.location === 'string' && alert.location.includes(',')) {
+        const [latStr, lngStr] = alert.location.split(',');
+        lat = parseFloat(latStr);
+        lng = parseFloat(lngStr);
+      }
 
-            const marker = new mapboxgl.Marker({ color: getStatusColor(alert.status) })
-                .setLngLat([lng, lat])
-                .setPopup(new mapboxgl.Popup().setText(alert.message || "SOS Alert"))
-                .addTo(map.current);
+      if (!lat || !lng || isNaN(lat) || isNaN(lng)) return;
 
-            markers.current.push(marker);
-            bounds.extend([lng, lat]);
+      const el = document.createElement('div');
+      el.className = 'beacon-marker';
+      el.style.backgroundColor = getStatusColor(alert.status);
 
-            if (alert.responder_lat && alert.responder_lng) {
-                const responderMarker = new mapboxgl.Marker({ color: 'blue' })
-                    .setLngLat([alert.responder_lng, alert.responder_lat])
-                    .setPopup(new mapboxgl.Popup().setText("Responder"))
-                    .addTo(map.current);
+      const marker = new mapboxgl.Marker({ element: el })
+        .setLngLat([lng, lat])
+        .setPopup(new mapboxgl.Popup().setText(alert.message || "SOS Alert"))
+        .addTo(map.current);
 
-                markers.current.push(responderMarker);
-                bounds.extend([alert.responder_lng, alert.responder_lat]);
-            }
-        });
+      markers.current.push(marker);
+      bounds.extend([lng, lat]);
+    });
 
-        if (!bounds.isEmpty()) {
-            map.current.fitBounds(bounds, { padding: 50 });
-        }
+    if (!bounds.isEmpty()) {
+      map.current.fitBounds(bounds, { padding: 60 });
+    }
 
-    }, [alerts]);
+  }, [alerts]);
 
-    return (
-        <div
-            ref={mapContainer}
-            style={{
-                width: '100%',
-                height: '700px',
-                position: 'relative',
-                borderRadius: '10px',
-                overflow: 'hidden',
-            }}
-        />
-    );
+  return (
+    <div
+      ref={mapContainer}
+      style={{
+        width: '100%',
+        height: '700px',
+        position: 'relative',
+        borderRadius: '10px',
+        overflow: 'hidden',
+      }}
+    />
+  );
 };
 
 export default MapDisplay;

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import Navbar from "../components/Navbar";
+import usePageTitle from "../pages/usePageTitle";
 
 const VolunteerDashboard = () => {
+  usePageTitle("Volunteer Dashboard | ResQNow");
   const [alerts, setAlerts] = useState([]);
   const [filteredAlerts, setFilteredAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -153,13 +155,12 @@ const VolunteerDashboard = () => {
                       <td className="p-2 border">{alert.location}</td>
                       <td className="p-2 border capitalize">{alert.urgency}</td>
                       <td className="p-2 border">
-                        <span className={`px-2 py-1 rounded text-white ${
-                          alert.status === "Resolved"
+                        <span className={`px-2 py-1 rounded text-white ${alert.status === "Resolved"
                             ? "bg-green-600"
                             : alert.status === "In Progress"
-                            ? "bg-blue-600"
-                            : "bg-red-600"
-                        }`}>
+                              ? "bg-blue-600"
+                              : "bg-red-600"
+                          }`}>
                           {alert.status || "Pending"}
                         </span>
                       </td>

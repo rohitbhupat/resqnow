@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import { toast, Toaster } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import usePageTitle from "../../pages/usePageTitle";
 
 const AdminNGOs = () => {
     const [ngo, setNGOs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editingNGO, setEditingNGO] = useState(null);
     const [editedData, setEditedData] = useState({});
+    const navigate = useNavigate();
+
 
     const API = "https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/userapi/userAPI";
 
@@ -15,6 +19,7 @@ const AdminNGOs = () => {
     }, []);
 
     const fetchNgos = async () => {
+        usePageTitle("NGOs List | ResQNow Admin");
         try {
             const res = await fetch(`${API}?scan=true&role=ngo`);
             const data = await res.json();
@@ -92,6 +97,14 @@ const AdminNGOs = () => {
                 <Toaster />
                 <AdminSidebar />
                 <div className="flex-1 p-6 bg-gray-100 min-h-screen">
+                    <div className="flex items-center justify-between mb-6">
+                        <button
+                            onClick={() => navigate('/')}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-semibold"
+                        >
+                            Home
+                        </button>
+                    </div>
                     <h1 className="text-2xl font-bold mb-6 text-gray-800">All NGOs</h1>
 
                     {loading ? (
@@ -135,7 +148,7 @@ const AdminNGOs = () => {
                                             </td>
 
                                             <td className="p-3 border-r border-gray-200 text-gray-700">
-                                                {editingNGO=== user.username ? (
+                                                {editingNGO === user.username ? (
                                                     <select
                                                         name="role"
                                                         value={editedData.role}

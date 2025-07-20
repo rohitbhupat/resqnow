@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import Navbar from "../components/Navbar";
 import MapDisplay from '../components/MapDisplay';
+import usePageTitle from "../pages/usePageTitle";
 
 const UserDashboard = () => {
+    usePageTitle("User Dashboard | ResQNow");
     const [alerts, setAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editingAlertId, setEditingAlertId] = useState(null);
