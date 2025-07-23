@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import Navbar from "../components/Navbar";
+import MapDisplay from '../components/MapDisplay';
 import usePageTitle from "../pages/usePageTitle";
 
 const VolunteerDashboard = () => {
@@ -11,6 +12,7 @@ const VolunteerDashboard = () => {
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterUrgency, setFilterUrgency] = useState("All");
   const volunteer = JSON.parse(localStorage.getItem("resq_user"));
+  const [activeMapAlert, setActiveMapAlert] = useState(null);
 
   useEffect(() => {
     fetchAlerts();
@@ -97,6 +99,11 @@ const VolunteerDashboard = () => {
     URL.revokeObjectURL(url);
   };
 
+  const modalStyles = {
+    overlay: "fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40",
+    container: "fixed inset-0 flex items-center justify-center z-50",
+    content: "bg-white rounded-lg shadow-xl p-6 w-full max-w-3xl max-h-[40rem] overflow-y-auto transform transition-all duration-300",
+  };
   return (
     <>
       <Navbar />
@@ -141,6 +148,7 @@ const VolunteerDashboard = () => {
                     <th className="p-3 border">Message</th>
                     <th className="p-3 border">Location</th>
                     <th className="p-3 border">Urgency</th>
+                    <th className="p-3 text-left border-r border-gray-300">Map</th>
                     <th className="p-3 border">Status</th>
                     <th className="p-3 border">Time</th>
                     <th className="p-3 border">Actions</th>
@@ -154,12 +162,18 @@ const VolunteerDashboard = () => {
                       <td className="p-2 border">{alert.message}</td>
                       <td className="p-2 border">{alert.location}</td>
                       <td className="p-2 border capitalize">{alert.urgency}</td>
+                      <td className="p-2 border-r border-gray-200">
+                        <button onClick={() => setActiveMapAlert(alert)} className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full text-xs font-semibold">
+
+                          View Map
+                        </button>
+                      </td>
                       <td className="p-2 border">
                         <span className={`px-2 py-1 rounded text-white ${alert.status === "Resolved"
-                            ? "bg-green-600"
-                            : alert.status === "In Progress"
-                              ? "bg-blue-600"
-                              : "bg-red-600"
+                          ? "bg-green-600"
+                          : alert.status === "In Progress"
+                            ? "bg-blue-600"
+                            : "bg-red-600"
                           }`}>
                           {alert.status || "Pending"}
                         </span>
@@ -176,6 +190,22 @@ const VolunteerDashboard = () => {
                     </tr>
                   ))}
                 </tbody>
+                {activeMapAlert && (
+                  <>
+                    <div className={modalStyles.overlay} onClick={() => setActiveMapAlert(null)} />
+                    <div className={modalStyles.container}>
+                      <div className={modalStyles.content}>
+                        <div className="flex justify-between items-center mb-2">
+                          <h2 className="text-lg font-bold text-gray-700">Map for {activeMapAlert.username}</h2>
+                          <button onClick={() => setActiveMapAlert(null)} className="px-3 py-1 bg-red-500 text-white rounded">X</button>
+                        </div>
+                        <div className="h-full w-full overflow-hidden">
+                          <MapDisplay alerts={[activeMapAlert]} />
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </table>
             </div>
           )}

@@ -3,8 +3,8 @@ import AdminSidebar from '../../components/AdminSidebar';
 import { toast, Toaster } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import usePageTitle from "../../pages/usePageTitle";
-
 const AdminNGOs = () => {
+    usePageTitle("NGOs List | ResQNow Admin");
     const [ngo, setNGOs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [editingNGO, setEditingNGO] = useState(null);
@@ -12,30 +12,29 @@ const AdminNGOs = () => {
     const navigate = useNavigate();
 
 
-    const API = "https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/userapi/userAPI";
+    const API = import.meta.env.VITE_NGO_API;
 
     useEffect(() => {
         fetchNgos();
     }, []);
 
     const fetchNgos = async () => {
-        usePageTitle("NGOs List | ResQNow Admin");
         try {
-            const res = await fetch(`${API}?scan=true&role=ngo`);
-            const data = await res.json();
+            const res = await fetch(`${API}?scan=true`);
+            let data = await res.json();
 
-            let parsed = data;
-            if (data.body) {
-                parsed = typeof data.body === "string" ? JSON.parse(data.body) : data.body;
-            }
+            // Handle if body is a string
+            if (typeof data.body === 'string') data = JSON.parse(data.body);
+            if (typeof data === 'string') data = JSON.parse(data);
 
-            const items = parsed.Items || [];
-            const onlyNGOs = items.filter(user => user.role === 'ngo');
+            const items = data.Items || [];
+
+            const onlyNGOs = items.filter(user => user.role?.toLowerCase() === 'ngo');
             setNGOs(onlyNGOs);
             setLoading(false);
         } catch (err) {
             console.error("Failed to fetch ngo:", err);
-            toast.error("Failed to load ngo");
+            toast.error("Failed to load NGO data");
             setLoading(false);
         }
     };

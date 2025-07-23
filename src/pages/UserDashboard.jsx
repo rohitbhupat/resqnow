@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import Navbar from "../components/Navbar";
-import MapDisplay from '../components/MapDisplay';
 import usePageTitle from "../pages/usePageTitle";
 
 const UserDashboard = () => {
@@ -11,7 +10,6 @@ const UserDashboard = () => {
     const [editingAlertId, setEditingAlertId] = useState(null);
     const [editedData, setEditedData] = useState({});
     const user = JSON.parse(localStorage.getItem('resq_user'));
-    const [activeMapAlert, setActiveMapAlert] = useState(null);
     useEffect(() => {
         if (activeMapAlert) {
             document.body.style.overflow = 'hidden';
@@ -147,7 +145,6 @@ const UserDashboard = () => {
                                     <th className="p-3 text-left border-r border-gray-300">Urgency</th>
                                     <th className="p-3 text-left border-r border-gray-300">Status</th>
                                     <th className="p-3 text-left border-r border-gray-300">Time</th>
-                                    <th className="p-3 text-left border-r border-gray-300">Map</th>
                                     <th className="p-3 text-left">Actions</th>
                                 </tr>
                             </thead>
@@ -178,12 +175,6 @@ const UserDashboard = () => {
                                         </td>
                                         <td className="p-2 border-r border-gray-200">{alert.status || "Pending"}</td>
                                         <td className="p-2 border-r border-gray-200">{new Date(alert.timestamp).toLocaleString()}</td>
-                                        <td className="p-2 border-r border-gray-200">
-                                            <button onClick={() => setActiveMapAlert(alert)} className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full text-xs font-semibold">
-
-                                                View Map
-                                            </button>
-                                        </td>
                                         <td className="p-2 space-x-1">
                                             {editingAlertId === alert.sos_id ? (
                                                 <>
@@ -200,22 +191,7 @@ const UserDashboard = () => {
                                     </tr>
                                 ))}
                             </tbody>
-                            {activeMapAlert && (
-                                <>
-                                    <div className={modalStyles.overlay} onClick={() => setActiveMapAlert(null)} />
-                                    <div className={modalStyles.container}>
-                                        <div className={modalStyles.content}>
-                                            <div className="flex justify-between items-center mb-2">
-                                                <h2 className="text-lg font-bold text-gray-700">Map for {activeMapAlert.username}</h2>
-                                                <button onClick={() => setActiveMapAlert(null)} className="px-3 py-1 bg-red-500 text-white rounded">X</button>
-                                            </div>
-                                            <div className="h-full w-full overflow-hidden">
-                                                <MapDisplay alerts={[activeMapAlert]} />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
+                            
                         </table>
                     </div>
                 )}
