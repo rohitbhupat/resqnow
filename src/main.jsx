@@ -16,17 +16,17 @@ import { getMainDefinition } from '@apollo/client/utilities';
 
 // 🔁 Replace with your actual API details from AWS AppSync
 const httpLink = createHttpLink({
-  uri: 'https://w3fvxcwzm5hnbd7op4ir6crfzq.appsync-api.ap-south-1.amazonaws.com/graphql',
+  uri: import.meta.env.VITE_APPSYNC_API,
   headers: {
-    'x-api-key': 'da2-sabexweilffjblamzmxjgf4dsa',
+    'x-api-key': import.meta.env.VITE_AUTH_TOKEN,
   },
 });
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: 'wss://w3fvxcwzm5hnbd7op4ir6crfzq.appsync-realtime-api.ap-south-1.amazonaws.com/graphql',
+    url: import.meta.env.VITE_WSS_API,
     connectionParams: {
-      authToken: 'da2-sabexweilffjblamzmxjgf4dsa',
+      authToken: import.meta.env.VITE_AUTH_TOKEN,
     },
   })
 );

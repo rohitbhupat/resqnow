@@ -16,6 +16,7 @@ const NGODashboard = () => {
   const [activeMapAlert, setActiveMapAlert] = useState(null);
 
   const ngo = JSON.parse(localStorage.getItem("resq_user"));
+  const API = import.meta.env.VITE_NGO_DASHBOARD;
 
   useEffect(() => {
     fetchNGOAlerts();
@@ -26,7 +27,7 @@ const NGODashboard = () => {
   }, [alerts, filterStatus, filterUrgency]);
 
   const fetchNGOAlerts = () => {
-    fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/ngostats/ngoSOSAlert")
+    fetch(API)
       .then((res) => res.json())
       .then((data) => {
         const parsed = typeof data.body === "string" ? JSON.parse(data.body) : data.body || data;
@@ -54,7 +55,7 @@ const NGODashboard = () => {
   const handleStatusUpdate = async (sos_id) => {
     toast.loading("Updating status...", { id: "status" });
     try {
-      const res = await fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/ngostats/ngoSOSAlert", {
+      const res = await fetch(API, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sos_id, status: newStatus }),
@@ -78,7 +79,7 @@ const NGODashboard = () => {
 
     toast.loading("Deleting alert...", { id: "delete" });
     try {
-      const res = await fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/ngostats/ngoSOSAlert", {
+      const res = await fetch(API, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sos_id }),

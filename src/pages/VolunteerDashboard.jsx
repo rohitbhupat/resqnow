@@ -23,7 +23,7 @@ const VolunteerDashboard = () => {
   }, [alerts, filterStatus, filterUrgency]);
 
   const fetchAlerts = () => {
-    fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/volunteerData/volunteerStats")
+    fetch(import.meta.env.VITE_VOLUNTEER_API)
       .then((res) => res.json())
       .then((data) => {
         const parsed = typeof data.body === "string" ? JSON.parse(data.body) : data.body || data;
@@ -56,8 +56,7 @@ const VolunteerDashboard = () => {
 
     toast.loading("Joining mission...", { id: "join" });
     try {
-      const res = await fetch(
-        "https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/volunteerData/volunteerStats",
+      const res = await fetch(import.meta.env.VITE_VOLUNTEER_API,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

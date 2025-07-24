@@ -14,7 +14,7 @@ const SOSForm = () => {
     });
 
     const [isLocating, setIsLocating] = useState(false);
-
+    const API = import.meta.env.VITE_SOS_FORM
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('resq_user'));
         if (storedUser) {
@@ -72,7 +72,7 @@ const SOSForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch('https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/sosAlert/submitSOSAlert', {
+            const res = await fetch(API, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

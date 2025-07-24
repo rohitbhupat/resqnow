@@ -10,6 +10,7 @@ const UserDashboard = () => {
     const [editingAlertId, setEditingAlertId] = useState(null);
     const [editedData, setEditedData] = useState({});
     const user = JSON.parse(localStorage.getItem('resq_user'));
+    const API = import.meta.env.VITE_USER_API;
     useEffect(() => {
         if (activeMapAlert) {
             document.body.style.overflow = 'hidden';
@@ -28,7 +29,7 @@ const UserDashboard = () => {
 
     const fetchAlerts = () => {
         if (user?.username) {
-            const url = `https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/sosAlert/submitSOSAlert?username=${user.username}`;
+            const url = `${API}?username=${user.username}`;
             fetch(url)
                 .then(res => res.json())
                 .then(data => {
@@ -60,7 +61,7 @@ const UserDashboard = () => {
     const handleSave = async (id) => {
         toast.loading("Updating SOS alert...", { id: "update" });
         try {
-            const response = await fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/sosAlert/submitSOSAlert", {
+            const response = await fetch(API, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -91,7 +92,7 @@ const UserDashboard = () => {
 
         toast.loading("Cancelling SOS alert...", { id: "cancel" });
         try {
-            const response = await fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/sosAlert/submitSOSAlert", {
+            const response = await fetch(API, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ sos_id: id })
@@ -191,7 +192,7 @@ const UserDashboard = () => {
                                     </tr>
                                 ))}
                             </tbody>
-                            
+
                         </table>
                     </div>
                 )}

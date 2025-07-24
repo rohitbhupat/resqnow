@@ -12,7 +12,7 @@ const AdminNGOs = () => {
     const navigate = useNavigate();
 
 
-    const API = import.meta.env.VITE_NGO_API;
+    const API = import.meta.env.VITE_ADMIN_NGO;
 
     useEffect(() => {
         fetchNgos();

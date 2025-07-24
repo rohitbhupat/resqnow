@@ -13,7 +13,7 @@ const AdminSOSAlerts = () => {
     const [editedData, setEditedData] = useState({});
     const [activeMapAlert, setActiveMapAlert] = useState(null);
     const navigate = useNavigate();
-
+    const API = import.meta.env.VITE_ADMIN_SOS
     useEffect(() => {
         if (activeMapAlert) {
             document.body.style.overflow = 'hidden';
@@ -31,7 +31,7 @@ const AdminSOSAlerts = () => {
 
     const fetchAlerts = () => {
         const adminUsername = "admin";
-        fetch(`https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/sosAlert/submitSOSAlert?username=${adminUsername}`)
+        fetch(`${API}?username=${adminUsername}`)
             .then(res => res.json())
             .then(data => {
                 let parsedAlerts = [];
@@ -57,7 +57,7 @@ const AdminSOSAlerts = () => {
     const handleSave = async (id) => {
         toast.loading("Updating SOS alert...", { id: "update" });
         try {
-            const response = await fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/sosAlert/submitSOSAlert", {
+            const response = await fetch(API, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ sos_id: id, location: editedData.location, message: editedData.message, urgency: editedData.urgency })
@@ -82,7 +82,7 @@ const AdminSOSAlerts = () => {
 
         toast.loading("Cancelling SOS alert...", { id: "cancel" });
         try {
-            const response = await fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/sosAlert/submitSOSAlert", {
+            const response = await fetch(API, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ sos_id: id })

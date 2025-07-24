@@ -1,6 +1,8 @@
+const API = import.meta.env.VITE_USER_API
+
 export const saveUserData = async (data, token) => {
   try {
-    const res = await fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/userapi/userAPI", {
+    const res = await fetch(API, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +21,7 @@ export const saveUserData = async (data, token) => {
 export const getUserData = async (username, token) => {
   try {
     const res = await fetch(
-      `https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/userapi/userAPI?username=${username}`,
+      `${API}?username=${username}`,
       {
         method: "GET",
         headers: {
@@ -37,7 +39,7 @@ export const getUserData = async (username, token) => {
 // 🛠 Update user
 export const updateUserData = async (data, token) => {
   try {
-    const res = await fetch("https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/userapi/userAPI", {
+    const res = await fetch(API, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -56,7 +58,7 @@ export const updateUserData = async (data, token) => {
 export const deleteUserData = async (username, token) => {
   try {
     const res = await fetch(
-      `https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/userapi/userAPI?username=${username}`,
+      `${API}?username=${username}`,
       {
         method: "DELETE",
         headers: {

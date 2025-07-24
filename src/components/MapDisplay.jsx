@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import '../assets/mapbeacon.css'; // Your beacon CSS
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiYmh1cGF0cnVoYWFuIiwiYSI6ImNtZDZ4NGV1NDBmMjkya3NjM3l3ZXp6d2oifQ.zIcvqlwpZDa02_Ms4EhNOw';
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 const getStatusColor = (status) => {
   if (status?.toLowerCase() === 'resolved') return 'green';

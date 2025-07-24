@@ -12,7 +12,7 @@ const AdminUsers = () => {
     const [editedData, setEditedData] = useState({});
     const navigate = useNavigate();
 
-    const API = "https://x21bqp0ggg.execute-api.ap-south-1.amazonaws.com/userapi/userAPI";
+    const API = import.meta.env.VITE_ADMIN_USER
 
     useEffect(() => {
         fetchUsers();
