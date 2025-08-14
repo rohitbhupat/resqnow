@@ -26,6 +26,7 @@ During disasters, communication delays can cost lives. **ResQNow** enables:
 - **NGO dashboards** for managing relief efforts
 - Secure, scalable, and serverless backend
 
+---
 This project was built as a Proof of Concept to demonstrate AWS's ability to handle mission-critical real-time applications with automated CI/CD pipelines.
 ---
 
