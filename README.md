@@ -26,8 +26,7 @@ During disasters, communication delays can cost lives. **ResQNow** enables:
 - **NGO dashboards** for managing relief efforts
 - Secure, scalable, and serverless backend
 
-This project was built as a **Proof of Concept** to demonstrate AWS's ability to handle mission-critical real-time applications.
-
+This project was built as a Proof of Concept to demonstrate AWS's ability to handle mission-critical real-time applications with automated CI/CD pipelines.
 ---
 
 ## ✨ Features
@@ -37,7 +36,9 @@ This project was built as a **Proof of Concept** to demonstrate AWS's ability to
 ✅ Secure login/signup via **AWS Cognito**  
 ✅ Alerts & data stored in **AWS DynamoDB**  
 ✅ File storage (images/reports) in **AWS S3**  
-✅ Fully serverless architecture for cost efficiency  
+✅ Fully serverless architecture for cost efficiency
+✅ CI/CD automation with AWS CodePipeline & CodeBuild
+✅ Infrastructure as Code (IaC) with AWS CloudFormation
 
 ---
 
@@ -53,17 +54,23 @@ This project was built as a **Proof of Concept** to demonstrate AWS's ability to
 - Amazon S3 – File storage
 - Amazon CloudFront – CDN for frontend hosting
 - Amazon SNS – Alert notifications
+- AWS CodePipeline – Automates build & deployment
+- AWS CodeBuild – Builds frontend & backend from GitHub source
+- AWS CloudFormation – Manages entire infrastructure as code for easy deployment & scaling
 
 ---
 
 ## ⚙ Tech Stack
-**Frontend:** React.js, TailwindCSS, Mapbox
+**Frontend:** React.js, TailwindCSS
 **Backend:** Node.js (AWS Lambda)  
 **Database:** Amazon DynamoDB  
-**Hosting:** CloudFront  
+**Hosting:** Amazon CloudFront + S3
 **Storage:** Amazon S3  
 **Auth:** AWS Cognito  
-
+**Notifications:** Amazon SNS
+**Map Service:** Mapbox (Third-Party)
+**CI/CD:** AWS CodePipeline, AWS CodeBuild
+**Infrastructure as Code:** AWS CloudFormation
 ---
 
 ## 🔄 How It Works
