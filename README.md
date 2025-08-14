@@ -44,7 +44,6 @@ This project was built as a **Proof of Concept** to demonstrate AWS's ability to
 ## 🏗 Architecture
 
 ![Architecture Diagram](./src/assets/architecture.png)  
-*(Replace this with your actual architecture diagram)*
 
 **AWS Services Used:**
 - Amazon Cognito – Authentication & Authorization
@@ -80,16 +79,13 @@ This project was built as a **Proof of Concept** to demonstrate AWS's ability to
 
 | Home Page | Live Map View |
 |-----------|---------------|
-| ![Home Screenshot 1](./src/assets/Home.png) ![Home Screenshot 2](./src/assets/Home2.png) | ![Map Screenshot](./src/assets/Map.png) |
+| ![Home Screenshot 1](./src/assets/Home.png) ![Home Screenshot 2](./src/assets/Home2.png) | ![Map Screenshot 1](./src/assets/Map.png) | ![Map Screenshot 2](./src/assets/Map2.png)
 
-*(Replace with your actual screenshots)*
 
 ---
 
 ## 🎥 Live Demo
-[▶ Watch Demo Video](https://dx6y4f94wre1x.cloudfront.net/)  
-*(Upload your demo video to YouTube or Loom and place link here)*
-
+[▶ Watch Live Demo](https://dx6y4f94wre1x.cloudfront.net/)  
 ---
 
 ## 🚀 Setup Instructions
