@@ -58,6 +58,7 @@ This project was built as a **Proof of Concept** to demonstrate AWS's ability to
 
 ## ⚙ Tech Stack
 **Frontend:** React.js, TailwindCSS, Mapbox
+
 **Backend:** Node.js (AWS Lambda)  
 **Database:** Amazon DynamoDB  
 **Hosting:** CloudFront  
