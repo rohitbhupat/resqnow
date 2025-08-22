@@ -12,18 +12,6 @@ const UserDashboard = () => {
     const user = JSON.parse(localStorage.getItem('resq_user'));
     const API = import.meta.env.VITE_USER_API;
     useEffect(() => {
-        if (activeMapAlert) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-
-        return () => {
-            document.body.style.overflow = '';
-        };
-    }, [activeMapAlert]);
-
-    useEffect(() => {
         fetchAlerts();
     }, []);
 
