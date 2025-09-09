@@ -10,7 +10,7 @@ const UserDashboard = () => {
     const [editingAlertId, setEditingAlertId] = useState(null);
     const [editedData, setEditedData] = useState({});
     const user = JSON.parse(localStorage.getItem('resq_user'));
-    const API = import.meta.env.VITE_USER_API;
+    const API = import.meta.env.VITE_USER_SOS;
     useEffect(() => {
         fetchAlerts();
     }, []);
