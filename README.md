@@ -57,7 +57,7 @@ This project was built as a **Proof of Concept** to demonstrate AWS's ability to
 - **Amazon SNS** – Alert notifications  
 - **AWS CodePipeline** – Automates build & deployment  
 - **AWS CodeBuild** – Builds frontend & backend from GitHub source  
-- **AWS CloudFormation** – Manages entire infrastructure as code for easy deployment & scaling  
+<!-- - **AWS CloudFormation** – Manages entire infrastructure as code for easy deployment & scaling   -->
 
 ---
 
@@ -71,7 +71,7 @@ This project was built as a **Proof of Concept** to demonstrate AWS's ability to
 **Notifications:** Amazon SNS  
 **Map Service:** Mapbox (Third-Party)  
 **CI/CD:** AWS CodePipeline, AWS CodeBuild  
-**Infrastructure as Code:** AWS CloudFormation  
+<!-- **Infrastructure as Code:** AWS CloudFormation   -->
 
 ---
 
@@ -93,7 +93,7 @@ This project was built as a **Proof of Concept** to demonstrate AWS's ability to
 ---
 
 ## 🎥 Live Demo
-[▶ Watch Live Demo](https://dx6y4f94wre1x.cloudfront.net/)  
+[▶ Watch Live Demo](https://d1xqanq559pt1x.cloudfront.net/)  
 
 ---
 
