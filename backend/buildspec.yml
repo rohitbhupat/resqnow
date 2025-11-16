@@ -1,0 +1,27 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "Installing dependencies for Lambda functions..."
+      - cd functions
+      - for dir in */ ; do
+          (cd "$dir" && npm install);
+        done
+      - cd ..
+
+  build:
+    commands:
+      - echo "Zipping Lambda functions..."
+      - mkdir -p zipped
+      - cd functions
+      - for dir in */ ; do
+          zip -r "../zipped/${dir%/}.zip" "$dir";
+        done
+      - cd ..
+
+artifacts:
+  files:
+    - zipped/*.zip
