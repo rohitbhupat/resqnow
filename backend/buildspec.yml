@@ -8,7 +8,7 @@ phases:
       - echo "Installing dependencies for Lambda functions..."
       - cd functions
       - for dir in */ ; do
-          (cd "$dir" && npm install);
+          (cd "$dir" && npm install)
         done
       - cd ..
 
@@ -18,7 +18,7 @@ phases:
       - mkdir -p zipped
       - cd functions
       - for dir in */ ; do
-          zip -r "../zipped/${dir%/}.zip" "$dir";
+          zip -r "../zipped/${dir%/}.zip" "$dir"
         done
       - cd ..
 
